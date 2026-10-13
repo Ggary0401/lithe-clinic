@@ -9,6 +9,20 @@
 | `npm run preview` | 建置並在 http://localhost:4173 預覽 |
 | `npm run dev` | 建置並用 wrangler 預覽（http://localhost:8788） |
 
+## 日常維護（行銷人員用 Codex 對話即可）
+在 Codex 開啟專案後直接說需求，例如「把醫學美容頁的第一段改成……」「把首頁第二張圖換成這張」。
+Codex 會依 `AGENTS.md` 自動處理：找位置、改文字／連結／圖片、建置與檢查，最後問你是否發佈。
+對應的指令：
+
+| 指令 | 用途 |
+| --- | --- |
+| `npm run content -- find "文字"` | 找出文字在哪些頁面 |
+| `npm run content -- replace "舊" "新" [--page 名稱] [--dry]` | 改文字（`--dry` 只預覽） |
+| `npm run content -- set-link "舊" "新"` | 改連結 |
+| `npm run content -- set-image "舊圖檔名" "新圖片路徑或網址"` | 換圖（自動縮圖、自動放入網站） |
+| `npm run verify` | 檢查站內連結與圖片 |
+| `npm run ship -- "說明"` | 建置 → 檢查 → commit → push，一鍵發佈 |
+
 ## 網域與部署
 - 正式網址 `lithe-med.com`；`lithe-clinic.com`、`www.*` 以 301 轉到它。
 - Pages 專案 `lithe-clinic` 連到 GitHub `Ggary0401/lithe-clinic` 的 `main`，輸出目錄 `public`（不跑 build，需提交 `public/`）。

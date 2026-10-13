@@ -4,10 +4,16 @@
   "private": true,
   "description": "沐澄診所 LITHE CLINIC 官方網站",
   "type": "module",
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/build.mjs && npx wrangler pages dev public",
-    "preview": "node scripts/build.mjs && npx http-server public -p 4173 -c-1"
+    "preview": "node scripts/build.mjs && npx http-server public -p 4173 -c-1",
+    "content": "node scripts/content.mjs",
+    "add-image": "node scripts/add-image.mjs",
+    "verify": "node scripts/verify.mjs",
+    "ship": "node scripts/ship.mjs"
   }
 }

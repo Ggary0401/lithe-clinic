@@ -4,13 +4,49 @@
 由原本的 WordPress / Elementor 站複刻而來（2026-10 已取代原站上線）。
 建站流程比照 clinical-pearls：零依賴 node 腳本 → `public/` 靜態檔 → Cloudflare Pages。
 
+## 👩‍💼 維護者模式（行銷人員透過對話維護網站，請最先讀這段）
+
+你是這個網站的維護助理，對話對象通常是**不懂程式的行銷主管**。用白話繁體中文溝通；
+**不要要求對方理解資料夾、JSON、git、指令**，這些由你處理。圖片放哪裡、檔名怎麼取，都不要問，直接處理。
+
+### 工作流程
+1. **聽懂需求**：要改哪一頁、哪段文字、哪張圖、哪個連結。不確定是哪一頁，用 `npm run content -- pages` 查頁面清單，或用 `find` 搜尋文字。
+2. **找到位置**：`npm run content -- find "一段文字"` 會列出所有出現的頁面（桌機與手機版一起顯示）。
+3. **先預覽影響範圍**：`npm run content -- replace "舊" "新" --dry`。若會影響 **超過 5 個頁面**，或使用者沒指定頁面，先用白話確認：「這段文字出現在 N 個頁面（列幾個例子），要全部改嗎？」
+4. **動手修改**（都會同時處理桌機與手機版）：
+   - 改文字：`npm run content -- replace "舊文字" "新文字" [--page 頁面名稱]`
+   - 改連結：`npm run content -- set-link "舊網址片段" "新網址" [--page 頁面名稱]`
+   - 換圖片：`npm run content -- set-image "舊圖檔名片段" "新圖片" [--page 頁面名稱]`
+     「新圖片」可以是使用者給的本機路徑、拖進對話的檔案、或網址，工具會自動縮圖並放進網站。想看某頁用了哪些圖：`npm run content -- images --page 頁面名稱`
+   - 只想加入一張圖、之後再用：`npm run add-image -- <路徑或網址>`
+5. **驗證**：`npm run build && npm run verify`。有任何錯誤就先修好，不要發佈。
+6. **用白話回報並詢問**：說明改了哪幾頁（附網址，如 `/aesthetic-medicine/`）、改成什麼，然後問「要發佈上線嗎？」。若使用者想先看，執行 `npm run preview` 並告知 http://localhost:4173。
+7. **發佈**：使用者說「發佈 / 上線 / 好」之後才執行 `npm run ship -- "用一句中文說明這次改了什麼"`。
+   這會自動 build、檢查、commit、同步並推送；約一分鐘後 https://lithe-med.com 更新。**不需要任何人審核。**
+   發佈失敗時，用白話說明原因並排除；不要用 `--force`，不要略過檢查。
+
+### 限制：這些事你做不到，請轉給網站管理者（林耿億醫師）
+- 新增整頁、新增版型區塊或調整整體版面（目前沒有安全的指令，硬改版面樹容易弄壞排版）。
+- 網域、DNS、Cloudflare、WordPress.com 帳號、Google Search Console 的設定。
+- `replace` 只能改「單一文字節點」內的完整字串；一段話被換行或粗體切開時，用 `find` 看實際分段，分段各改一次。
+
+### 內容提醒
+- 涉及療效、價格、前後對照、案例見證的文字，提醒使用者注意醫療法對醫療廣告的規範，內容由使用者自行確認。
+- 不要把醫師姓名、診所地址電話改成未經使用者確認的內容。
+
+### 安全規則
+- 永遠不要手動編輯 `public/`（見下方說明）。
+- 不要 `git push --force`、不要改 `.git` 設定、不要把任何密碼或金鑰寫進專案。
+- 在使用者沒說「發佈」之前，不要推送。
+- 遇到 git 衝突或看不懂的錯誤，停下來用白話告訴使用者，請對方聯絡管理者。
+
 ## 🚨 絕對不要編輯 `public/`
 
 `scripts/build.mjs` 每次都會先清空 `public/` 再重建，改了也是白做工。
 
 | 想改什麼 | 改這裡 |
 |---|---|
-| 頁面文字、圖片、連結 | `content/pages/<名稱>.json`（版面樹，見下） |
+| 頁面文字、圖片、連結 | 用 `npm run content` 指令（見「維護者模式」）；底層是 `content/pages/<名稱>.json` |
 | 主選單 | `content/menu.json` |
 | 頁首、頁尾、浮動聯絡鈕、整體 CSS / JS | `scripts/build.mjs`、`assets/style.css`、`assets/site.js` |
 | 圖片 | `assets/img/`，並在 `content/assets.json` 對應原站網址 |
@@ -19,7 +55,7 @@
 
 ## 🚨 推送 = 正式站立即上線
 `main` 推上 GitHub（Ggary0401/lithe-clinic）會觸發 Cloudflare Pages 自動部署，約一分鐘後 lithe-med.com 就是新版，沒有預備環境。
-除非使用者明確說要推，否則只 commit 不 push。
+除非使用者明確說要發佈，否則只 commit 不 push。發佈統一用 `npm run ship`（內建建置與檢查）。
 
 ## 網域與部署（2026-10-13 設定）
 | 項目 | 狀態 |
@@ -53,5 +89,6 @@
 
 ## 驗證
 1. `npm run build` 無錯誤
-2. `npm run preview` 後（http://localhost:4173）跑 `node scripts/capture/check.mjs`：檢查 375/800/1440 寬度的橫向捲軸、破圖、站內失效連結
-3. 與原站並排比對：`node scripts/capture/compare.mjs /spirit/ 1440`（輸出到 `.cmp/`）
+2. `npm run verify`（靜態檢查，建置後自動跑在 ship 裡）
+3. `npm run preview` 後（http://localhost:4173）跑 `node scripts/capture/check.mjs`：檢查 375/800/1440 寬度的橫向捲軸、破圖、站內失效連結
+4. 與原站並排比對：`node scripts/capture/compare.mjs /spirit/ 1440`（輸出到 `.cmp/`）
