@@ -10,7 +10,8 @@ import { join } from 'node:path';
 const ROOT = new URL('..', import.meta.url).pathname;
 const OUT = join(ROOT, 'public');
 const ASSETS = join(ROOT, 'assets');
-const ORIGIN = 'https://lithe-med.com';
+const ORIGIN = 'https://lithe-med.com'; // 原站（只用來對應圖片網址）
+const SITE_URL = 'https://lithe-clinic.com'; // 本站正式網址（canonical / og / sitemap）
 const SITE = '沐澄診所 LITHE CLINIC';
 
 const pagesIndex = JSON.parse(readFileSync(join(ROOT, 'content/pages.json'), 'utf8'));
@@ -251,7 +252,7 @@ const header = `<a class="skip" href="#content">跳至主要內容</a>
 const fab = `<div class="fab"><div class="fab-menu"><a href="https://lin.ee/LaNofeZ" target="_blank" rel="noopener">LINE</a><a href="https://m.me/61555660705035" target="_blank" rel="noopener">Messenger</a></div><button class="fab-btn" aria-label="聯絡我們" aria-expanded="false">${icoChat}</button></div>`;
 
 function pageHtml(p, d) {
-  const url = ORIGIN + '/' + (p.path ? p.path.split('/').map(encodeURIComponent).join('/') + '/' : '');
+  const url = SITE_URL + '/' + (p.path ? p.path.split('/').map(encodeURIComponent).join('/') + '/' : '');
   const og = d.og ? localImg(d.og) : localImg(ORIGIN + '/wp-content/uploads/2024/02/lithemed_1200x675.png');
   MOBILE = false;
   let body = render(d.tree, null);
@@ -266,7 +267,7 @@ function pageHtml(p, d) {
 <title>${esc(d.title || SITE)}</title>
 <meta name="description" content="${esc(d.desc || '沐澄診所：醫學美容、抗老逆齡、整形手術、泌尿專科。')}">
 <link rel="canonical" href="${url}">
-<meta property="og:type" content="website"><meta property="og:site_name" content="${SITE}"><meta property="og:title" content="${esc(d.title || SITE)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${ORIGIN}${og}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="${SITE}"><meta property="og:title" content="${esc(d.title || SITE)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${SITE_URL}${og}">
 ${robots}
 <link rel="icon" href="${localImg(ORIGIN + '/wp-content/uploads/2024/02/LOGO-3.png')}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -314,7 +315,7 @@ for (const f of readdirSync(join(ASSETS, 'img'))) copyFileSync(join(ASSETS, 'img
 writeFileSync(join(OUT, '404.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>找不到頁面 - ${SITE}</title><link rel="stylesheet" href="/assets/style.css?v=${ver['style.css']}"></head><body class="nf"><main><h1>找不到這個頁面</h1><p><a href="/">回到首頁</a></p></main></body></html>`, 'utf8');
 const urls = rendered.filter(({ p }) => p.path !== 'home-02').map(({ r }) => `<url><loc>${r.url}</loc></url>`).join('\n');
 writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, 'utf8');
-writeFileSync(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`, 'utf8');
+writeFileSync(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`, 'utf8');
 writeFileSync(join(OUT, '_headers'), `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`, 'utf8');
 
 console.log(`建置完成：${rendered.length} 頁，${classOf.size} 個樣式 class`);
