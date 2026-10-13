@@ -155,6 +155,8 @@ function overlayHtml(o, kind) {
 
 function render(n, parent) {
   if (typeof n === 'string') return esc(n);
+  // 標記 dk 的節點：手機版面樹中嵌入的桌機區塊，沿用桌機規則（手機上會自動堆疊）
+  if (n.dk && MOBILE) { MOBILE = false; try { return render(n, parent); } finally { MOBILE = true; } }
   const t = n.t;
   const s = n.s || {};
   if (t === 'br') return '<br>';
@@ -210,6 +212,7 @@ function render(n, parent) {
   if (isGal) classes.push('gal');
   if (tokens.includes('elementor-tab-title')) classes.push('acc-t');
   if (tokens.includes('elementor-tab-content') && !n.open) classes.push('shut');
+  if (n.dk) classes.push('doc-m', n.side === 'l' ? 'doc-l' : 'doc-r');
   if (isRow && !MOBILE) classes.push('r');
   if (isLayer) classes.push('lay');
   if (hasOv || kids.some(isBgLayer)) classes.push('hasl');

@@ -72,6 +72,11 @@ main{display:block;overflow-x:clip}
 .mb{display:none}
 @media (max-width:767px){.dk{display:none}.mb{display:block}}
 @media (max-width:767px){
+ /* 醫師區塊（手機版原站沒有設計）：上方照片靠右裁切，下方堆疊文字 */
+ .doc-m{background-repeat:no-repeat!important;background-position:right top!important;background-size:auto 340px!important;background-color:#6f7c89!important;padding:360px 24px 44px!important}
+ .doc-l{background-position:left top!important}
+ .doc-m *{max-width:100%!important;min-height:0!important}
+ .doc-m [class]{padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important}
  .gal{min-height:0!important}
  .gal>*{position:static!important;width:100%!important;max-width:100%!important;transform:none!important;margin-bottom:14px}
  .r{flex-direction:column!important}
