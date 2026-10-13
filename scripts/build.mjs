@@ -11,7 +11,7 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const OUT = join(ROOT, 'public');
 const ASSETS = join(ROOT, 'assets');
 const ORIGIN = 'https://lithe-med.com'; // 原站（只用來對應圖片網址）
-const SITE_URL = 'https://lithe-clinic.com'; // 本站正式網址（canonical / og / sitemap）
+const SITE_URL = 'https://lithe-med.com'; // 本站正式網址（canonical / og / sitemap）；原站網域改指向本站後，與 ORIGIN 相同
 const SITE = '沐澄診所 LITHE CLINIC';
 
 const pagesIndex = JSON.parse(readFileSync(join(ROOT, 'content/pages.json'), 'utf8'));
@@ -308,7 +308,8 @@ ${fab}
 }
 
 // 靜態資源
-for (const f of readdirSync(ASSETS)) if (f !== 'img') copyFileSync(join(ASSETS, f), join(OUT, 'assets', f));
+for (const f of readdirSync(ASSETS)) if (f !== 'img' && f !== '_redirects') copyFileSync(join(ASSETS, f), join(OUT, 'assets', f));
+copyFileSync(join(ASSETS, '_redirects'), join(OUT, '_redirects')); // Pages 要求放在輸出目錄根
 for (const f of readdirSync(join(ASSETS, 'img'))) copyFileSync(join(ASSETS, 'img', f), join(OUT, 'assets', 'img', f));
 
 // 404 / sitemap / robots / headers
