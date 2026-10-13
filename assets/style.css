@@ -37,6 +37,8 @@ li:hover>.sub,li:focus-within>.sub{opacity:1;visibility:visible;transform:none}
 /* 手機 */
 @media (max-width:1024px){
  :root{--hd:68px}
+ /* backdrop-filter 會讓 fixed 的選單面板以頁首為定位基準，高度被切成頁首高度；手機版不用毛玻璃 */
+ .hd{backdrop-filter:none;background:rgba(255,255,255,.97)}
  .logo img{height:46px}
  .burger{display:block;width:44px;height:44px;border:0;background:none;padding:12px;position:relative}
  .burger span{display:block;height:1.5px;background:var(--c0);margin:6px 0;transition:.25s}
