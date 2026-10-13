@@ -1,6 +1,6 @@
 # 沐澄診所 LITHE CLINIC 官網
 
-複刻 https://lithe-med.com/ 的靜態網站：`npm run build` 產生純靜態 HTML，部署到 Cloudflare Pages。
+沐澄診所官方網站（https://lithe-med.com）。由原 WordPress 站複刻成靜態網站：`npm run build` 產生純靜態 HTML，推上 GitHub 後由 Cloudflare Pages 自動部署。
 
 ## 指令
 | 指令 | 用途 |
@@ -8,6 +8,12 @@
 | `npm run build` | 產生 `public/` |
 | `npm run preview` | 建置並在 http://localhost:4173 預覽 |
 | `npm run dev` | 建置並用 wrangler 預覽（http://localhost:8788） |
+
+## 網域與部署
+- 正式網址 `lithe-med.com`；`lithe-clinic.com`、`www.*` 以 301 轉到它。
+- Pages 專案 `lithe-clinic` 連到 GitHub `Ggary0401/lithe-clinic` 的 `main`，輸出目錄 `public`（不跑 build，需提交 `public/`）。
+- 推 `main` 即上線。`assets/_redirects` 負責舊 WordPress 網址的 301。
+- 詳細設定與待辦見 [AGENTS.md](AGENTS.md)。
 
 ## 專案結構
 ```
@@ -19,10 +25,11 @@ assets/                style.css、site.js、img/
 scripts/build.mjs      建置腳本（零外部依賴）
 scripts/fetch-assets.mjs / shrink-assets.mjs   下載並壓縮原站圖片（一次性）
 scripts/capture/       渲染原站、擷取版面、並排比對、全站檢查的工具
+assets/_redirects      舊網址 301 規則（建置時複製到 public/）
 public/                建置輸出，由 Pages 部署
 ```
 
-## 重新擷取原站
+## 重新擷取原站（原站已退役，僅供日後參考）
 需要 macOS 的 Google Chrome 與 Node 22+。
 ```bash
 node scripts/capture/cdp.mjs content/capture-list.json /tmp/out 1440   # 桌機
