@@ -1971,3 +1971,4 @@
 .z1970{display:flex;flex-direction:column;flex-wrap:wrap;row-gap:0px;column-gap:0px;flex-shrink:0;justify-items:normal;position:relative;width:100%}
 .z1971{display:flex;flex-wrap:wrap;align-items:stretch;row-gap:0px;column-gap:0px;flex-grow:1;padding-top:50px;padding-bottom:64px;justify-items:normal;place-items:stretch normal;width:100%;max-width:min(100%, 767px)}
 .z1972{display:flex;flex-direction:column;padding-right:24px;padding-left:24px;justify-items:normal;background-image:linear-gradient(0deg, rgb(218, 218, 218) 0%, rgb(165, 175, 182) 100%);position:relative;max-width:100%}
+.z1973{padding-bottom:12px;justify-items:normal}
