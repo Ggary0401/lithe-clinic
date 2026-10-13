@@ -31,6 +31,7 @@ node scripts/capture/cdp.mjs content/capture-list.json /tmp/out 390    # 手機�
 把輸出的 `tree` 分別放進 `content/pages/<名稱>.json` 的 `tree` / `treeM`，再 `node scripts/fetch-assets.mjs && node scripts/shrink-assets.mjs && npm run build`。
 
 ## 已知差異
-- Elementor 的進場動畫、數字跳動、手風琴展開/收合、輪播自動播放沒有複刻（輪播改成可橫向滑動）。**手風琴收合中的內文原站是隱藏的，擷取時沒有抓到，目前只有標題列**（例如 /nsv/ 的「Q & A」），需要的話要補抓。
+- Elementor 的進場動畫、數字跳動、輪播自動播放沒有複刻（輪播改成可橫向滑動）。
+- 手風琴（Q & A）可點擊展開 / 收合。原站有些頁面的面板本來就是空的（例如 /nsv/），所以展開後沒有內容，與原站一致。
 - 浮動聯絡鈕是展開 LINE / Messenger 兩個連結的簡化版。
 - 頁面表單、留言等需要後端的功能原站沒有，也沒有複刻。

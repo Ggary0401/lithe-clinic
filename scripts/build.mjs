@@ -207,6 +207,8 @@ function render(n, parent) {
   let c = cls(decl);
   const classes = [c];
   if (isGal) classes.push('gal');
+  if (tokens.includes('elementor-tab-title')) classes.push('acc-t');
+  if (tokens.includes('elementor-tab-content') && !n.open) classes.push('shut');
   if (isRow && !MOBILE) classes.push('r');
   if (isLayer) classes.push('lay');
   if (hasOv || kids.some(isBgLayer)) classes.push('hasl');

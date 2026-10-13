@@ -1,4 +1,7 @@
 (()=>{
+// 手風琴（toggle）收合中的內文原本是 display:none：先記下哪些原本展開，再強制全部展開才抓得到內文
+document.querySelectorAll('.elementor-tab-content').forEach(e=>{if(getComputedStyle(e).display!=='none')e.dataset.open='1'});
+{const st=document.createElement('style');st.textContent='.elementor-tab-content{display:block!important}';document.head.appendChild(st)}
 const root=document.querySelector('[data-elementor-type="wp-page"]')||document.querySelector('main')||document.body;
 const KEEP=['display','flex-direction','flex-wrap','justify-content','align-items','align-content','row-gap','column-gap','flex-grow','flex-shrink','padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left','background-color','background-size','background-position','background-repeat','border-top','border-right','border-bottom','border-left','border-radius','box-shadow','opacity','position','overflow','text-align','color','font-size','font-weight','font-family','font-style','line-height','letter-spacing','text-transform','text-decoration-line','grid-template-columns','object-fit','aspect-ratio','top','right','bottom','left','z-index','transform','mix-blend-mode','background-blend-mode','filter','backdrop-filter','flex-basis','align-self','order','justify-self','white-space','text-shadow','background-attachment','list-style-type','vertical-align','word-break','grid-template-rows','justify-items','place-items'];
 const INH=new Set(['text-align','color','font-size','font-weight','font-family','font-style','line-height','letter-spacing','text-transform']);
@@ -21,6 +24,7 @@ function walk(el,par){
  if(cs.maxWidth!=='none')s['max-width']=cs.maxWidth;
  if(cs.minHeight!=='0px'&&cs.minHeight!=='auto')s['min-height']=cs.minHeight;
  n.s=s;
+ if(el.dataset&&el.dataset.open)n.open=1;
  for(const [ps,key] of [['::before','pb'],['::after','pa']]){const q=getComputedStyle(el,ps);if(q.content!=='none'&&q.content!=='normal'&&q.display!=='none'&&q.position==='absolute'){const bgc=q.backgroundColor,bgi=q.backgroundImage;if(bgc!=='rgba(0, 0, 0, 0)'||bgi!=='none'){n[key]={bg:bgc,img:bgi!=='none'?bgi:null,op:q.opacity,blend:q.mixBlendMode,br:q.borderRadius,w:q.width,h:q.height,top:q.top,left:q.left,right:q.right,bottom:q.bottom,size:q.backgroundSize,pos:q.backgroundPosition,rep:q.backgroundRepeat}}}}
  if(n.t==='img'){n.src=abs(el.currentSrc||el.getAttribute('data-src')||el.src);n.alt=el.alt;n.nw=Math.round(r.width);n.nh=Math.round(r.height);return n}
  if(n.t==='a'){n.href=el.href}

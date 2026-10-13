@@ -24,6 +24,7 @@
 節點欄位：`t` 標籤、`s` 樣式、`c` 子節點、`bgImg` 背景圖、`src` 圖片、`href` 連結、`pb`/`pa` 為 `::before`/`::after` 遮罩。
 `build.mjs` 把相同樣式去重成 `pages.css` 的 `.zN` class。要改字，直接在 JSON 搜尋該段文字。
 資料原本由 `scripts/capture/` 用無頭 Chrome 渲染原站擷取（需 macOS 的 Google Chrome）；
+手風琴面板原站預設隱藏，擷取時由 `extract.js` 強制展開並用 `open` 記錄預設狀態；渲染端為 `.acc-t`（標題）/ `.shut`（收合內文），開合在 `site.js`。
 `content/capture-list.json` 是頁面清單。若原站更新想重抓，見 README。
 
 ## 慣例

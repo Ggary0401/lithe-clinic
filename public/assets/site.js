@@ -16,6 +16,20 @@
   nav?.addEventListener('click', (e) => {
     if (e.target.closest('a[href^="#"], a[href*="/#"]')) { nav.classList.remove('open'); burger?.setAttribute('aria-expanded', false); document.body.style.overflow = ''; }
   });
+  // 手風琴：標題列點擊展開 / 收合下一個內文區塊
+  document.querySelectorAll('.acc-t').forEach((t) => {
+    const body = t.nextElementSibling;
+    if (!body) return;
+    t.setAttribute('role', 'button');
+    t.setAttribute('tabindex', '0');
+    t.setAttribute('aria-expanded', !body.classList.contains('shut'));
+    const toggle = (e) => {
+      e.preventDefault();
+      t.setAttribute('aria-expanded', !body.classList.toggle('shut'));
+    };
+    t.addEventListener('click', toggle);
+    t.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') toggle(e); });
+  });
   const hd = document.querySelector('.hd');
   let lastY = 0;
   addEventListener('scroll', () => {

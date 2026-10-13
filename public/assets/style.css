@@ -65,6 +65,8 @@ li:hover>.sub,li:focus-within>.sub{opacity:1;visibility:visible;transform:none}
 main{display:block;overflow-x:clip}
 .hasl>:not(.lay){position:relative;z-index:1}
 @media (max-width:1024px){main *{background-attachment:scroll!important}}
+.shut{display:none!important}
+.acc-t{cursor:pointer}
 .mb{display:none}
 @media (max-width:767px){.dk{display:none}.mb{display:block}}
 @media (max-width:767px){
