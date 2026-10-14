@@ -21,6 +21,7 @@ Codex 會依 `AGENTS.md` 自動處理：找位置、改文字／連結／圖片�
 | `npm run content -- replace "舊" "新" [--page 名稱] [--dry]` | 改文字（`--dry` 只預覽） |
 | `npm run content -- set-link "舊" "新"` | 改連結 |
 | `npm run content -- set-image "舊圖檔名" "新圖片路徑或網址"` | 換圖（自動縮圖、自動放入網站） |
+| `npm run serve` | 本機預覽（http://localhost:4173，Windows / Mac 通用） |
 | `npm run verify` | 檢查站內連結與圖片 |
 | `npm run ship -- "說明"` | 建置 → 檢查 → commit → push，一鍵發佈 |
 

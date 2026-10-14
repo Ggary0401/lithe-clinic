@@ -44,8 +44,9 @@
 - **發佈會連網**：`npm run ship` 最後一步是 `git push`，需要網路。若沙盒擋住（出現 network / permission 錯誤），不要換別的方式硬推，也不要改 git 設定；用白話告訴使用者：「發佈需要連網，請在跳出的核准視窗按『允許』（或開啟網路權限），我再重試一次」。
 - **只用專案裡的指令**：改內容、加圖、檢查、發佈一律用 `npm run content` / `add-image` / `verify` / `ship`，不要自己手寫 git 指令或直接改 `content/pages/*.json`（那是壓成一行的大檔，手改很容易弄壞）。
 - **不要兩邊同時改**：這個資料夾可能也被其他 AI 工具使用。動手前先 `git status`；如果工作區已有不是你做的未提交變更，停下來問使用者，不要覆蓋或一起提交。`ship` 推送前會自動 `git pull --rebase`，遇到衝突就停下來，不要自行解衝突。
-- **預覽**：`npm run preview` 會用 `npx http-server`，需要網路。想離線預覽，用 `node scripts/build.mjs && python3 -m http.server 4173 -d public`，網址 http://localhost:4173，看完記得把它關掉。
-- **圖片縮圖**：macOS 會自動縮圖（用系統內建的 `sips`）；Windows 或 Linux 不會縮圖，只會在檔案過大（>1.5MB）時提醒，請使用者先縮小再提供。
+- **預覽**：`npm run serve`（會先建置，再在 http://localhost:4173 提供預覽；Windows、Mac 都能用，不需要網路），看完按 Ctrl+C 或結束該程序。
+- **圖片縮圖**：macOS 用內建的 `sips`、Windows 用內建的 PowerShell 自動縮圖（長邊 2000px 以內）；Windows 縮圖失敗時會保留原圖，檔案過大（>1.5MB）時工具會提醒，請使用者先縮小再提供。Linux 不縮圖。
+- **Windows PowerShell**：若 `npm run xxx -- "文字"` 裡的 `--` 被吃掉或參數不對，改成直接執行 `node scripts/content.mjs ...`、`node scripts/ship.mjs "說明"`（效果相同）。若出現「已停用指令碼執行 / npm.ps1」錯誤，請使用者在 PowerShell 執行 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` 後重開。
 - **溝通方式**：對方不是工程師。回報時只講「改了哪幾頁、改成什麼、要不要發佈」，不要貼指令輸出或檔案路徑；錯誤也用白話解釋成因與下一步。
 
 ## 🚨 絕對不要編輯 `public/`

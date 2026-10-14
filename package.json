@@ -14,6 +14,7 @@
     "content": "node scripts/content.mjs",
     "add-image": "node scripts/add-image.mjs",
     "verify": "node scripts/verify.mjs",
-    "ship": "node scripts/ship.mjs"
+    "ship": "node scripts/ship.mjs",
+    "serve": "node scripts/serve.mjs"
   }
 }

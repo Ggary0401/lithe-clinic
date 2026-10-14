@@ -48,8 +48,12 @@ git clone https://github.com/Ggary0401/lithe-clinic.git
 完成後會多出一個 `lithe-clinic` 資料夾。
 
 ### 5. 用 Codex 開啟這個資料夾
-用你平常開啟 Codex 的方式，**選擇 `lithe-clinic` 這個資料夾**作為工作資料夾。
-Codex 會自動讀裡面的 `AGENTS.md`，知道怎麼維護這個網站，你不需要再教它。
+Codex 需要知道「要在哪個資料夾工作」。請讓 Codex 的**工作資料夾**指到剛才下載的 `lithe-clinic`：
+- 如果你用的是有視窗的 Codex 程式：在介面上選擇（或開啟）`lithe-clinic` 這個資料夾。
+- 如果你用的是終端機版：先用 `cd` 切到 `lithe-clinic` 資料夾，再啟動 Codex。
+- 不確定自己是哪一種：截一張 Codex 的畫面給網站管理者，他會告訴你按哪裡。
+
+選好之後，Codex 會自動讀資料夾裡的 `AGENTS.md`，知道怎麼維護這個網站，你不需要再教它。
 
 ### 6. 試跑一次（確認一切正常）
 對 Codex 說：
@@ -89,13 +93,15 @@ Codex 會：
 - **發佈 = 立刻更新正式網站**，沒有審核流程。發佈前請自己確認 Codex 說明的修改內容。
 - 涉及療效、價格、前後對照、案例見證的文字，請注意醫療廣告相關規範。
 - 不要在對話中貼密碼或金鑰。
-- 圖片請盡量先縮小（單張建議 1.5MB 以下）。Mac 會自動縮小，Windows 不會。
+- 圖片請盡量先縮小（單張建議 1.5MB 以下）。工具會自動縮圖（Mac、Windows 都有），但手機直拍的超大照片仍建議先縮小。
 - 兩個人不要同時修改同一頁；如果 Codex 說遇到「衝突」，**停下來**，找管理者。
 
 ## 五、常見問題
 | 狀況 | 怎麼辦 |
 |---|---|
 | Codex 說「找不到 npm / node」 | Node.js 沒裝好，重新安裝後重新開機 |
+| **Windows**：出現「因為這個系統上已停用指令碼執行」或 `npm.ps1` | 打開 PowerShell，輸入 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`，問你時按 `Y`，再重新開啟 Codex |
+| **Windows**：看預覽時瀏覽器打不開 | 對 Codex 說「用 npm run serve 開預覽」，再開 http://localhost:4173，看完請 Codex 關掉 |
 | 發佈時出現「network / permission」或要你核准 | 這是 Codex 的安全機制，按「允許」再重試 |
 | 發佈時要求登入 GitHub | 重新執行第 3 步的 `gh auth login` |
 | 改了文字但網站沒變 | 等 1～2 分鐘，並用瀏覽器強制重新整理；仍沒變就問 Codex「剛才有成功發佈嗎」 |

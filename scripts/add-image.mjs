@@ -14,6 +14,38 @@ const OK = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.avif']);
 
 const sips = (...a) => { try { return execFileSync('sips', a, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; } };
 
+// Windows 內建的 PowerShell 縮圖：長邊縮到 MAX_SIDE 以內；JPEG 重新壓縮（品質 78），PNG 保留透明度
+function winShrink(srcPath, dstPath, ext) {
+  const script = `
+Add-Type -AssemblyName System.Drawing
+$img = [System.Drawing.Image]::FromFile($env:IMG_SRC)
+try {
+  $max = [int]$env:IMG_MAX
+  $scale = [Math]::Min(1.0, $max / [Math]::Max($img.Width, $img.Height))
+  $nw = [int][Math]::Round($img.Width * $scale); $nh = [int][Math]::Round($img.Height * $scale)
+  $bmp = New-Object System.Drawing.Bitmap($nw, $nh)
+  $g = [System.Drawing.Graphics]::FromImage($bmp)
+  $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+  $g.DrawImage($img, 0, 0, $nw, $nh); $g.Dispose()
+  if ($env:IMG_EXT -eq '.png') { $bmp.Save($env:IMG_DST, [System.Drawing.Imaging.ImageFormat]::Png) }
+  else {
+    $codec = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() | Where-Object { $_.MimeType -eq 'image/jpeg' }
+    $ep = New-Object System.Drawing.Imaging.EncoderParameters(1)
+    $ep.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter([System.Drawing.Imaging.Encoder]::Quality, [long]78)
+    $bmp.Save($env:IMG_DST, $codec, $ep)
+  }
+  $bmp.Dispose()
+} finally { $img.Dispose() }
+`;
+  try {
+    execFileSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', script], {
+      stdio: 'ignore',
+      env: { ...process.env, IMG_SRC: srcPath, IMG_DST: dstPath, IMG_MAX: String(MAX_SIDE), IMG_EXT: ext === '.png' ? '.png' : '.jpg' },
+    });
+    return existsSync(dstPath) && statSync(dstPath).size > 0;
+  } catch { return false; }
+}
+
 export async function addImage(src, name) {
   mkdirSync(IMG, { recursive: true });
   const isUrl = /^https?:\/\//.test(src);
@@ -52,6 +84,10 @@ export async function addImage(src, name) {
           if (done && target !== out) return finish(basename(target), buf.length, tmp);
         }
       }
+    }
+    // Windows：沒有 sips，改用內建的 PowerShell（.NET System.Drawing）縮圖；失敗就維持原圖
+    if (!done && process.platform === 'win32' && ['.jpg', '.jpeg', '.png'].includes(ext) && buf.length > 300 * 1024) {
+      done = winShrink(tmp, out, ext);
     }
     if (!done) copyFileSync(tmp, out);
     return finish(file, buf.length, tmp);
