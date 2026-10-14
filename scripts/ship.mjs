@@ -2,11 +2,12 @@
 //   node scripts/ship.mjs "這次改了什麼"
 // 推上 main 後，Cloudflare Pages 約一分鐘內自動更新正式站。
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const msg = process.argv.slice(2).join(' ').trim();
 if (!msg) { console.error('請附上說明，例如：npm run ship -- "更新醫學美容頁的活動文字"'); process.exit(1); }
-const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: 'inherit', cwd: new URL('..', import.meta.url).pathname, ...opts });
-const out = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8', cwd: new URL('..', import.meta.url).pathname }).trim();
+const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: 'inherit', cwd: fileURLToPath(new URL('..', import.meta.url)), ...opts });
+const out = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8', cwd: fileURLToPath(new URL('..', import.meta.url)) }).trim();
 
 try {
   const branch = out('git', ['branch', '--show-current']);

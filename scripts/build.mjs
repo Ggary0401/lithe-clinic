@@ -4,10 +4,11 @@
 // content/assets.json   原站圖片網址 → assets/img/ 檔名
 // 輸出：public/（每次建置先清空再重建，請勿手動編輯）
 import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, copyFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(ROOT, 'public');
 const ASSETS = join(ROOT, 'assets');
 const ORIGIN = 'https://lithe-med.com'; // 原站（只用來對應圖片網址）

@@ -1,9 +1,10 @@
 // 一次性工具：掃描 content/pages/*.json 內的圖片網址，下載到 assets/img/，並寫出 content/assets.json（網址 → 本機檔名）
 import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { join, extname } from 'node:path';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const urls = new Set(['https://lithe-med.com/wp-content/uploads/2024/02/LOGO_180X60_300.png', 'https://lithe-med.com/wp-content/uploads/2024/02/LOGO_180X60_300_R.png', 'https://lithe-med.com/wp-content/uploads/2024/02/LOGO_B_150ppi.png', 'https://lithe-med.com/wp-content/uploads/2024/02/LOGO-3.png', 'https://lithe-med.com/wp-content/uploads/2024/02/lithemed_1200x675.png']);
 for (const f of readdirSync(join(ROOT, 'content/pages'))) {
   const d = JSON.parse(readFileSync(join(ROOT, 'content/pages', f), 'utf8'));

@@ -12,10 +12,11 @@
 //
 // 注意：replace 只會改「單一文字節點」內的完整字串；一段話被 <br> 或粗體切開時，要分段各改一次。
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { join, basename } from 'node:path';
 import { addImage } from './add-image.mjs';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIR = join(ROOT, 'content/pages');
 const pagesIndex = JSON.parse(readFileSync(join(ROOT, 'content/pages.json'), 'utf8'));
 

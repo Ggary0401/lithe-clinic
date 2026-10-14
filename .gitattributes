@@ -1,0 +1,2 @@
+# 統一用 LF 換行，避免 Windows 的 CRLF 造成整個檔案被視為變更
+* text=auto eol=lf

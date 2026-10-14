@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
-const pages = JSON.parse(readFileSync(''+new URL('../../content/pages.json', import.meta.url).pathname+'','utf8'));
+const pages = JSON.parse(readFileSync(fileURLToPath(new URL('../../content/pages.json', import.meta.url)),'utf8'));
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless=new','--remote-debugging-port=9335','--user-data-dir=/tmp/cdp-prof3','about:blank'],{stdio:'ignore'});
 let tabs; for(let i=0;i<40;i++){ try{ tabs=await (await fetch('http://127.0.0.1:9335/json')).json(); break }catch{ await new Promise(r=>setTimeout(r,500)) } }
 const ws = new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl); await new Promise(r=>ws.onopen=r);

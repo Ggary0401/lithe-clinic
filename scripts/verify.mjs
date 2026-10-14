@@ -1,9 +1,10 @@
 // 發佈前的靜態檢查（零依賴）：掃描 public/ 內所有頁面，確認站內連結、圖片、canonical 都沒壞。
 //   node scripts/verify.mjs      有問題會列出並以非 0 結束
 import { readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(ROOT, 'public');
 const problems = [];
 

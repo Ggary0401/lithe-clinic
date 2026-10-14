@@ -1,9 +1,10 @@
 // 一次性工具：把過大的圖縮到長邊 2000px 以內；webp / 無透明的大 png 轉成 jpg，並同步更新 content/assets.json
 import { readFileSync, writeFileSync, statSync, unlinkSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { join, extname } from 'node:path';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const mapPath = join(ROOT, 'content/assets.json');
 const map = JSON.parse(readFileSync(mapPath, 'utf8'));
 const sips = (...a) => execFileSync('sips', a, { encoding: 'utf8' });

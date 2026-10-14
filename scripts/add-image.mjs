@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { join, extname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const IMG = join(ROOT, 'assets/img');
 const MAX_SIDE = 2000;
 const OK = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.avif']);

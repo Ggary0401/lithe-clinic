@@ -1,10 +1,11 @@
 // node compare.mjs <path> [width] [maxRows] → cmp/<name>.jpg（左：原站，右：本機）
 import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { writeFileSync, mkdirSync } from 'node:fs';
 const [,, path='/', width='1440', maxRows='6'] = process.argv;
 const W=+width, H= W<500?812:900;
 const name = (path.replace(/[^\w-]/g,'_')||'home')+'_'+W;
-const dir = new URL('../../.cmp/', import.meta.url).pathname; mkdirSync(dir,{recursive:true});
+const dir = fileURLToPath(new URL('../../.cmp/', import.meta.url)); mkdirSync(dir,{recursive:true});
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless=new','--remote-debugging-port=9334','--user-data-dir=/tmp/cdp-prof2','--hide-scrollbars','about:blank'],{stdio:'ignore'});
 let tabs; for(let i=0;i<40;i++){ try{ tabs=await (await fetch('http://127.0.0.1:9334/json')).json(); break }catch{ await new Promise(r=>setTimeout(r,500)) } }
 const ws = new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl); await new Promise(r=>ws.onopen=r);
