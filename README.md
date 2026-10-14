@@ -10,6 +10,7 @@
 | `npm run dev` | 建置並用 wrangler 預覽（http://localhost:8788） |
 
 ## 日常維護（行銷人員用 Codex 對話即可）
+第一次設定與日常使用請看 [MAINTAINING.md](MAINTAINING.md)（給同仁的白話說明）。
 在 Codex 開啟專案後直接說需求，例如「把醫學美容頁的第一段改成……」「把首頁第二張圖換成這張」。
 Codex 會依 `AGENTS.md` 自動處理：找位置、改文字／連結／圖片、建置與檢查，最後問你是否發佈。
 對應的指令：
