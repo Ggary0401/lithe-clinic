@@ -8,7 +8,7 @@
 
 ## 一、第一次設定（只做一次，約 20 分鐘）
 
-### 1. 安裝兩個軟體
+### 1. 安裝兩個軟體（Windows 也可以在 PowerShell 輸入 `winget install --id Git.Git` 安裝 Git）
 | 軟體 | 用途 | 下載 |
 |---|---|---|
 | **Git** | 把網站檔案抓到你的電腦、把修改送出去 | https://git-scm.com/downloads |
@@ -39,7 +39,7 @@ git config --global user.email "你的信箱"
 ```
 
 ### 4. 把網站檔案抓到你的電腦
-在終端機輸入（資料夾放在哪裡都可以，建議放在文件夾或桌面）：
+在終端機輸入（Windows 建議先建立 `C:\work` 資料夾，用 `cd C:\work` 切過去，路徑避開中文）：
 
 ```bash
 git clone https://github.com/Ggary0401/lithe-clinic.git
@@ -47,13 +47,17 @@ git clone https://github.com/Ggary0401/lithe-clinic.git
 
 完成後會多出一個 `lithe-clinic` 資料夾。
 
-### 5. 用 Codex 開啟這個資料夾
-Codex 需要知道「要在哪個資料夾工作」。請讓 Codex 的**工作資料夾**指到剛才下載的 `lithe-clinic`：
-- 如果你用的是有視窗的 Codex 程式：在介面上選擇（或開啟）`lithe-clinic` 這個資料夾。
-- 如果你用的是終端機版：先用 `cd` 切到 `lithe-clinic` 資料夾，再啟動 Codex。
-- 不確定自己是哪一種：截一張 Codex 的畫面給網站管理者，他會告訴你按哪裡。
+### 5. 在 Codex 桌面版新增這個專案
+Codex 左邊的側邊欄裡，有**資料夾圖示**的項目就是「專案」，每個專案對應電腦上的一個資料夾。
 
-選好之後，Codex 會自動讀資料夾裡的 `AGENTS.md`，知道怎麼維護這個網站，你不需要再教它。
+1. 在 Codex 按 **Add new project**（中文介面可能叫「新增專案」），或按鍵盤 **Ctrl + O**（Mac 是 **Cmd + O**）。
+2. 在跳出的視窗選擇剛才下載的 `lithe-clinic` 資料夾。
+3. 專案出現在側邊欄後，在這個專案底下開一個**新對話**，之後的維護都在這裡進行。
+4. Codex 會自動讀資料夾裡的 `AGENTS.md`，知道怎麼維護這個網站，你不需要再教它。
+
+小提醒：
+- **Windows 的資料夾路徑請避開中文**（例如放在 `C:\work\lithe-clinic`）。已有使用者回報，Windows 使用者名稱含中文時，Codex 選資料夾可能出錯；網站工具本身沒有這個問題。
+- 輸入框下方有「權限」選項。如果目前是「完整存取權」，代表 Codex 在你的電腦上幾乎什麼都能做，官方也提醒可能造成資料遺失。維護這個網站建議改成 **Ask for approval**（需要核准），Codex 要連網發佈時會問你，你按允許即可。
 
 ### 6. 試跑一次（確認一切正常）
 對 Codex 說：
