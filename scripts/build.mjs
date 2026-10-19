@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, copyFileSy
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import { markdownToHtml, parseArticle } from './markdown.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(ROOT, 'public');
@@ -311,6 +312,55 @@ ${fab}
   writeFileSync(join(dir, 'index.html'), html, 'utf8');
 }
 
+// ───────── 文章：content/articles/*.md → /articles/<slug>/ 與 /articles/ 列表（沒有文章時完全不輸出）─────────
+const ARTICLES = join(ROOT, 'content/articles');
+const articles = existsSync(ARTICLES)
+  ? readdirSync(ARTICLES).filter((f) => f.endsWith('.md')).map((f) => {
+    const slug = f.replace(/\.md$/, '');
+    const { meta, body } = parseArticle(readFileSync(join(ARTICLES, f), 'utf8'));
+    if (!meta.title) throw new Error(`文章 ${f} 缺少 title`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(meta.date || '')) throw new Error(`文章 ${f} 的 date 要像 2026-10-19`);
+    return { slug, ...meta, html: markdownToHtml(body) };
+  }).sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug))
+  : [];
+const articleUrls = [];
+if (articles.length) {
+  const defaultOg = localImg(ORIGIN + '/wp-content/uploads/2024/02/lithemed_1200x675.png');
+  const doc = (title, desc, path, og, main) => {
+    const url = SITE_URL + path;
+    articleUrls.push(url);
+    mkdirSync(join(OUT, ...path.split('/').filter(Boolean).map(decodeURIComponent)), { recursive: true });
+    writeFileSync(join(OUT, ...path.split('/').filter(Boolean).map(decodeURIComponent), 'index.html'), `<!doctype html>
+<html lang="zh-Hant"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${url}">
+<meta property="og:type" content="article"><meta property="og:site_name" content="${SITE}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${SITE_URL}${og}">
+<link rel="icon" href="${localImg(ORIGIN + '/wp-content/uploads/2024/02/LOGO-3.png')}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/style.css?v=${ver['style.css']}">
+</head>
+<body>
+${header}
+<main id="content">${main}</main>
+${fab}
+<script src="/assets/site.js?v=${ver['site.js']}" defer></script>
+</body></html>
+`, 'utf8');
+  };
+  for (const a of articles) {
+    const desc = a.desc || a.title;
+    const cover = a.cover ? `<img class="art-cover" src="${esc(a.cover)}" alt="${esc(a.title)}" decoding="async">` : '';
+    doc(`${a.title} - ${SITE}`, desc, `/articles/${a.slug}/`, a.cover || defaultOg,
+      `<article class="art"><p class="art-meta"><a href="/articles/">最新文章</a> · <time datetime="${a.date}">${a.date}</time></p><h1>${esc(a.title)}</h1>${cover}<div class="art-body">${a.html}</div></article>`);
+  }
+  doc(`最新文章 - ${SITE}`, '沐澄診所的最新文章與衛教資訊。', '/articles/', defaultOg,
+    `<section class="art"><h1>最新文章</h1><ul class="art-list">${articles.map((a) => `<li><a href="/articles/${a.slug}/">${a.cover ? `<img src="${esc(a.cover)}" alt="" loading="lazy" decoding="async">` : ''}<span><time datetime="${a.date}">${a.date}</time><strong>${esc(a.title)}</strong>${a.desc ? `<em>${esc(a.desc)}</em>` : ''}</span></a></li>`).join('')}</ul></section>`);
+}
+
 // 靜態資源
 for (const f of readdirSync(ASSETS)) if (f !== 'img' && f !== '_redirects') copyFileSync(join(ASSETS, f), join(OUT, 'assets', f));
 copyFileSync(join(ASSETS, '_redirects'), join(OUT, '_redirects')); // Pages 要求放在輸出目錄根
@@ -318,7 +368,7 @@ for (const f of readdirSync(join(ASSETS, 'img'))) copyFileSync(join(ASSETS, 'img
 
 // 404 / sitemap / robots / headers
 writeFileSync(join(OUT, '404.html'), `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>找不到頁面 - ${SITE}</title><link rel="stylesheet" href="/assets/style.css?v=${ver['style.css']}"></head><body class="nf"><main><h1>找不到這個頁面</h1><p><a href="/">回到首頁</a></p></main></body></html>`, 'utf8');
-const urls = rendered.filter(({ p }) => p.path !== 'home-02').map(({ r }) => `<url><loc>${r.url}</loc></url>`).join('\n');
+const urls = [...rendered.filter(({ p }) => p.path !== 'home-02').map(({ r }) => r.url), ...articleUrls].map((u) => `<url><loc>${u}</loc></url>`).join('\n');
 writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, 'utf8');
 writeFileSync(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`, 'utf8');
 writeFileSync(join(OUT, '_headers'), `/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`, 'utf8');
