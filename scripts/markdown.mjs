@@ -1,9 +1,10 @@
 // 文章用的極簡 Markdown 轉 HTML（零依賴）。只支援文章會用到的語法：
-//   ## 標題、### 小標題、段落、- 清單、1. 清單、> 引言、---（分隔線）、
+//   ## 標題、### 小標題、段落、- 清單、1. 清單、表格、> 引言、---（分隔線）、
 //   **粗體**、*斜體*、[文字](網址)、![說明](圖片)
 // 所有文字先跳脫，不允許直接寫 HTML；連結只接受 http(s)、mailto、站內路徑與 #錨點。
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const safeUrl = (u) => (/^(https?:\/\/|mailto:|\/|#)/.test(u.trim()) ? u.trim() : '#');
+const tableCells = (line) => line.trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim());
 
 function inline(s) {
   let out = esc(s);
@@ -25,12 +26,27 @@ export function markdownToHtml(md) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
     let m;
-    if ((m = line.match(/^(#{2,3})\s+(.+)$/))) { html.push(`<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`); i++; continue; }
+    if ((m = line.match(/^(#{2,3})\s+(.+)$/))) {
+      const level = m[1].length;
+      const anchor = m[2].match(/\s+\{#([a-z0-9-]+)\}\s*$/);
+      const label = anchor ? m[2].slice(0, anchor.index).trim() : m[2];
+      html.push(`<h${level}${anchor ? ` id="${anchor[1]}"` : ''}>${inline(label)}</h${level}>`);
+      i++;
+      continue;
+    }
     if (/^---+\s*$/.test(line)) { html.push('<hr>'); i++; continue; }
     if (/^>\s?/.test(line)) {
       const buf = [];
       while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ''));
       html.push(`<blockquote>${inline(buf.join(' '))}</blockquote>`);
+      continue;
+    }
+    if (/^\s*\|.+\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?(?:\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?\s*$/.test(lines[i + 1])) {
+      const headings = tableCells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && /^\s*\|.+\|\s*$/.test(lines[i])) rows.push(tableCells(lines[i++]));
+      html.push(`<div class="table-scroll"><table><thead><tr>${headings.map((cell) => `<th>${inline(cell)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${headings.map((_, index) => `<td>${inline(row[index] || '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
       continue;
     }
     if (/^([-*]|\d+\.)\s+/.test(line)) {
