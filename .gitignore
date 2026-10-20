@@ -5,3 +5,4 @@ node_modules/
 .claude/
 .wrangler/
 .cmp/
+STATUS.md
